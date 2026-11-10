@@ -17,9 +17,9 @@
           </div>
           <div class="field">
             <label class="field__label" for="person-day">{{ dayLabel() }}</label>
-            <select class="field__input" id="person-day" formControlName="day">
-              @for (weekday of weekdays; track weekday) {
-              <option [value]="weekday">{{ weekday }}</option>
+            <select class="field__input" id="person-day" formControlName="dayOfWeek">
+              @for (weekday of weekdays; track $index) {
+              <option [ngValue]="$index">{{ weekday }}</option>
               }
             </select>
           </div>

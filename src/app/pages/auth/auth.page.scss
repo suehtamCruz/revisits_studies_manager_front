@@ -105,6 +105,44 @@
   border-color: var(--color-primary);
 }
 
+.field__password {
+  position: relative;
+
+  .field__input {
+    padding-right: 44px;
+  }
+}
+
+.field__toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius);
+
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+.field__toggle:hover {
+  color: var(--color-primary);
+}
+
+.form__error {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c0392b;
+}
+
 .submit {
   width: 100%;
   padding: 12px;

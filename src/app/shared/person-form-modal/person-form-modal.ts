@@ -1,27 +1,13 @@
 import { Component, inject, input, model, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { WEEKDAY_LABELS } from '../../core/models';
 
 export interface PersonFormValue {
   name: string;
   age: number | null;
-  day: string;
+  dayOfWeek: number;
   address: string;
   details: string;
-}
-
-const WEEKDAYS = [
-  'Segunda-feira',
-  'Terça-feira',
-  'Quarta-feira',
-  'Quinta-feira',
-  'Sexta-feira',
-  'Sábado',
-  'Domingo',
-];
-
-function todayWeekday(): string {
-  const label = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' }).format(new Date());
-  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 @Component({
@@ -39,13 +25,13 @@ export class PersonFormModal {
 
   private readonly fb = inject(FormBuilder);
 
-  protected readonly weekdays = WEEKDAYS;
+  protected readonly weekdays = WEEKDAY_LABELS;
 
   protected readonly form = this.fb.group({
     name: ['', Validators.required],
     age: [null as number | null],
-    day: [todayWeekday()],
-    address: [''],
+    dayOfWeek: [new Date().getDay()],
+    address: ['', Validators.required],
     details: [''],
   });
 
@@ -63,11 +49,17 @@ export class PersonFormModal {
     this.saved.emit({
       name: value.name ?? '',
       age: value.age ?? null,
-      day: value.day ?? '',
+      dayOfWeek: value.dayOfWeek ?? new Date().getDay(),
       address: value.address ?? '',
       details: value.details ?? '',
     });
-    this.form.reset({ name: '', age: null, day: todayWeekday(), address: '', details: '' });
+    this.form.reset({
+      name: '',
+      age: null,
+      dayOfWeek: new Date().getDay(),
+      address: '',
+      details: '',
+    });
     this.close();
   }
 }

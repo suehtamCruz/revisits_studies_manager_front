@@ -11,6 +11,10 @@ Aplicação Angular para organizar estudos bíblicos e revisitas — cadastro, l
 
 ## Começando
 
+A aplicação consome a **Revisits & Studies Manager API** (ASP.NET Core + JWT).
+A URL base fica em `src/environments/environment.ts` (`apiUrl`, padrão
+`http://localhost:5000`) — ajuste para a porta onde a API estiver rodando.
+
 ```bash
 npm install
 npm start        # dev server em http://localhost:4200
@@ -38,6 +42,12 @@ src/
     │   ├── header/             # Cabeçalho (abre o menu lateral)
     │   ├── menu/               # Menu lateral (drawer) com navegação
     │   └── person-form-modal/  # Modal de cadastro reutilizável
+    ├── core/
+    │   ├── models.ts                   # DTOs da API + labels de dia da semana
+    │   ├── auth.service.ts             # Login/registro, token JWT no localStorage
+    │   ├── revisits-studies.service.ts # CRUD de /api/revisitAndStudies
+    │   ├── auth.interceptor.ts         # Anexa Bearer token; logout em 401
+    │   └── auth.guard.ts               # authGuard (privadas) e guestGuard (/auth)
     ├── app.routes.ts
     └── app.config.ts
 ```
@@ -46,14 +56,28 @@ src/
 
 | Rota        | Página                                       |
 |-------------|----------------------------------------------|
-| `/auth`     | Login / Cadastro (redirecionamento padrão)   |
-| `/home`     | Home com resumo do dia                       |
-| `/estudos`  | Listagem de estudos                          |
-| `/revisitas`| Listagem de revisitas                        |
+| `/auth`     | Login / Cadastro (`guestGuard`)              |
+| `/home`     | Home com resumo do dia (`authGuard`)         |
+| `/estudos`  | Listagem de estudos (`authGuard`)            |
+| `/revisitas`| Listagem de revisitas (`authGuard`)          |
+
+Rotas protegidas exigem token JWT; sem token, redirecionam para `/auth`, e
+`/auth` redireciona para `/home` quando já autenticado.
 
 As rotas de listagem aceitam o query param `?novo=1`, que abre o modal de
 cadastro automaticamente — é assim que os itens "Novo estudo" e "Nova revisita"
 do menu lateral funcionam.
+
+## Integração com a API
+
+- **Auth**: `POST /api/Auth/register` → `POST /api/Auth/login` (cadastro já faz
+  login automático). O token JWT fica em `localStorage` e é anexado pelo
+  `authInterceptor` em todas as requisições; um `401` faz logout e volta para
+  `/auth`. O nome do usuário é extraído do payload do JWT.
+- **Registros**: `GET /api/revisitAndStudies?dayOfWeek=&type=` e `POST` no mesmo
+  endpoint. `dayOfWeek` segue o enum da API (0 = domingo … 6 = sábado), igual ao
+  retorno de `Date.getDay()` — a home filtra pelo dia atual com
+  `new Date().getDay()`. `type` aceita `Study` ou `Revisit`.
 
 ## Componentes compartilhados
 
@@ -79,9 +103,9 @@ controlado por `[(open)]`. Inputs:
 | `dayLabel`    | Label do campo de dia (select semanal) |
 | `submitLabel` | Texto do botão de salvar               |
 
-Emite `(saved)` com `PersonFormValue` (`name`, `age`, `day`, `address`,
+Emite `(saved)` com `PersonFormValue` (`name`, `age`, `dayOfWeek`, `address`,
 `details`) ao submeter um formulário válido. Campos: Nome*, Idade, Dia
-(pré-selecionado com o dia atual), Endereço e Detalhes.
+(select 0–6, pré-selecionado com `Date.getDay()`), Endereço* e Detalhes.
 
 ## Convenções
 

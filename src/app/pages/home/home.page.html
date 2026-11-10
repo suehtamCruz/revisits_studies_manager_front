@@ -1,4 +1,4 @@
-<app-header [userName]="userName()" />
+<app-header />
 
 <main class="home">
   <section class="hero">
@@ -8,11 +8,11 @@
 
     <div class="hero__stats">
       <div class="hero__stat">
-        <span class="hero__stat-value">{{ studiesToday() }}</span>
+        <span class="hero__stat-value">{{ studiesToday().length }}</span>
         <span class="hero__stat-label">estudos</span>
       </div>
       <div class="hero__stat">
-        <span class="hero__stat-value">{{ revisitsToday() }}</span>
+        <span class="hero__stat-value">{{ revisitsToday().length }}</span>
         <span class="hero__stat-label">revisitas</span>
       </div>
     </div>
@@ -20,15 +20,31 @@
 
   <section class="section">
     <h2 class="section__title">Estudos de hoje</h2>
+    @if (studiesToday().length === 0) {
     <div class="section__empty">
       <p>Nada marcado para hoje.</p>
     </div>
+    } @else {
+    <ul class="section__list">
+      @for (study of studiesToday(); track study.id) {
+      <li class="section__item">{{ study.name }}</li>
+      }
+    </ul>
+    }
   </section>
 
   <section class="section">
     <h2 class="section__title">Revisitas de hoje</h2>
+    @if (revisitsToday().length === 0) {
     <div class="section__empty">
       <p>Nada marcado para hoje.</p>
     </div>
+    } @else {
+    <ul class="section__list">
+      @for (revisit of revisitsToday(); track revisit.id) {
+      <li class="section__item">{{ revisit.name }}</li>
+      }
+    </ul>
+    }
   </section>
 </main>

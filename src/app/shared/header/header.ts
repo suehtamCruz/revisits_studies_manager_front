@@ -1,5 +1,6 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
 import { Menu } from '../menu/menu';
 
 @Component({
@@ -9,7 +10,17 @@ import { Menu } from '../menu/menu';
   styleUrl: './header.scss'
 })
 export class Header {
-  readonly userName = input('teste');
+  private readonly auth = inject(AuthService);
+
+  readonly userName = input<string | undefined>(undefined);
+
+  protected readonly displayName = computed(
+    () => this.userName() ?? this.auth.userName() ?? 'Usuário',
+  );
 
   protected readonly menuOpen = signal(false);
+
+  protected logout(): void {
+    this.auth.logout();
+  }
 }
