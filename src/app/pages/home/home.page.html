@@ -1,0 +1,34 @@
+<app-header [userName]="userName()" />
+
+<main class="home">
+  <section class="hero">
+    <p class="hero__greeting">Olá, {{ userName() }}!</p>
+    <h1 class="hero__weekday">{{ weekday() }}</h1>
+    <p class="hero__date">{{ dateLabel() }}</p>
+
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat-value">{{ studiesToday() }}</span>
+        <span class="hero__stat-label">estudos</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-value">{{ revisitsToday() }}</span>
+        <span class="hero__stat-label">revisitas</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section__title">Estudos de hoje</h2>
+    <div class="section__empty">
+      <p>Nada marcado para hoje.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section__title">Revisitas de hoje</h2>
+    <div class="section__empty">
+      <p>Nada marcado para hoje.</p>
+    </div>
+  </section>
+</main>

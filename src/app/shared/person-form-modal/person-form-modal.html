@@ -1,0 +1,44 @@
+@if (open()) {
+<div class="modal-overlay">
+  <main class="modal-page">
+    <h1 class="modal-page__title">{{ title() }}</h1>
+
+    <section class="card">
+      <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="field">
+          <label class="field__label" for="person-name">Nome</label>
+          <input class="field__input" id="person-name" type="text" formControlName="name" />
+        </div>
+
+        <div class="form__row">
+          <div class="field">
+            <label class="field__label" for="person-age">Idade</label>
+            <input class="field__input" id="person-age" type="number" formControlName="age" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="person-day">{{ dayLabel() }}</label>
+            <select class="field__input" id="person-day" formControlName="day">
+              @for (weekday of weekdays; track weekday) {
+              <option [value]="weekday">{{ weekday }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="person-address">Endereço</label>
+          <input class="field__input" id="person-address" type="text" formControlName="address" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="person-details">Detalhes</label>
+          <textarea class="field__input field__input--textarea" id="person-details"
+            formControlName="details"></textarea>
+        </div>
+
+        <button class="submit" type="submit" [disabled]="form.invalid">{{ submitLabel() }}</button>
+      </form>
+    </section>
+  </main>
+</div>
+}
