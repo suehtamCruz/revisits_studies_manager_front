@@ -27,7 +27,12 @@
     } @else {
     <ul class="section__list">
       @for (study of studiesToday(); track study.id) {
-      <li class="section__item">{{ study.name }}</li>
+      <li>
+        <a class="section__item" [routerLink]="['/registro', study.id]">
+          <span class="section__name">{{ study.name }}</span>
+          <span class="section__address">{{ study.address }}</span>
+        </a>
+      </li>
       }
     </ul>
     }
@@ -42,7 +47,12 @@
     } @else {
     <ul class="section__list">
       @for (revisit of revisitsToday(); track revisit.id) {
-      <li class="section__item">{{ revisit.name }}</li>
+      <li>
+        <a class="section__item" [routerLink]="['/registro', revisit.id]">
+          <span class="section__name">{{ revisit.name }}</span>
+          <span class="section__address">{{ revisit.address }}</span>
+        </a>
+      </li>
       }
     </ul>
     }

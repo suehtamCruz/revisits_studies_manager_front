@@ -19,6 +19,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/studies/studies.page').then((m) => m.StudiesPage),
   },
   {
+    path: 'registro/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/details/details.page').then((m) => m.DetailsPage),
+  },
+  {
     path: 'revisitas',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/revisits/revisits.page').then((m) => m.RevisitsPage),

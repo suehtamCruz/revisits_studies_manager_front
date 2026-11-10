@@ -64,9 +64,8 @@ src/
 Rotas protegidas exigem token JWT; sem token, redirecionam para `/auth`, e
 `/auth` redireciona para `/home` quando já autenticado.
 
-As rotas de listagem aceitam o query param `?novo=1`, que abre o modal de
-cadastro automaticamente — é assim que os itens "Novo estudo" e "Nova revisita"
-do menu lateral funcionam.
+O cadastro de estudos e revisitas acontece nas próprias páginas de listagem,
+via botão "+ Novo" que abre o `app-person-form-modal`.
 
 ## Integração com a API
 
@@ -89,8 +88,8 @@ Cabeçalho fixo no topo. Exibe o nome do usuário (`[userName]`, padrão
 ### `app-menu`
 
 Drawer lateral controlado por `[(open)]` (two-way binding com `model`).
-Navegação: **Hoje**, **Estudos**, **Novo estudo**, **Revisitas**,
-**Nova revisita** e **Sair**. O item da rota ativa recebe destaque.
+Navegação: **Hoje**, **Estudos**, **Revisitas** e **Sair**. O item da rota
+ativa recebe destaque.
 
 ### `app-person-form-modal`
 

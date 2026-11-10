@@ -1,12 +1,16 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, finalize, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { LoadingService } from './loading.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  const loading = inject(LoadingService);
+
+  loading.show();
 
   const token = auth.token();
   const request = token
@@ -21,5 +25,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
       return throwError(() => error);
     }),
+    finalize(() => loading.hide()),
   );
 };

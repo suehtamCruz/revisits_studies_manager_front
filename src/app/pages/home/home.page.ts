@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { Header } from '../../shared/header/header';
 import { AuthService } from '../../core/auth.service';
 import { RevisitsStudiesService } from '../../core/revisits-studies.service';
@@ -7,7 +8,7 @@ import { RevisitAndStudy } from '../../core/models';
 
 @Component({
   selector: 'app-home',
-  imports: [Header],
+  imports: [Header, RouterLink],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss'
 })

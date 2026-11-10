@@ -1,0 +1,48 @@
+<app-header />
+
+<main class="page">
+  <a class="back" routerLink="/home">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+    <span>Voltar</span>
+  </a>
+
+  @if (item(); as record) {
+  <section class="card">
+    <span class="card__type">{{ record.type === 'Study' ? 'Estudo' : 'Revisita' }}</span>
+    <h1 class="card__name">{{ record.name }}</h1>
+
+    <dl class="card__fields">
+      @if (record.age !== undefined) {
+      <div class="card__field">
+        <dt>Idade</dt>
+        <dd>{{ record.age }}</dd>
+      </div>
+      }
+      @if (record.dayOfWeek !== undefined) {
+      <div class="card__field">
+        <dt>Dia</dt>
+        <dd>{{ weekdayLabel(record.dayOfWeek) }}</dd>
+      </div>
+      }
+      <div class="card__field">
+        <dt>Endereço</dt>
+        <dd>{{ record.address }}</dd>
+      </div>
+      @if (record.details) {
+      <div class="card__field">
+        <dt>Detalhes</dt>
+        <dd>{{ record.details }}</dd>
+      </div>
+      }
+    </dl>
+  </section>
+  } @else if (notFound()) {
+  <div class="empty">
+    <p>Registro não encontrado.</p>
+  </div>
+  }
+</main>

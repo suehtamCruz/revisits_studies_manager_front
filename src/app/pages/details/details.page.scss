@@ -1,0 +1,87 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.back:hover {
+  background: var(--color-primary-soft);
+}
+
+.card {
+  background: var(--color-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--padding);
+  box-shadow: 0 8px 30px rgba(35, 18, 60, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.card__type {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.card__name {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--color-primary);
+  margin-top: calc(var(--gap) * -1 + 4px);
+}
+
+.card__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card__field dt {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.card__field dd {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.empty {
+  background: var(--color-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--padding);
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
