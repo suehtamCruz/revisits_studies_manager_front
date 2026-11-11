@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output } from '@angular/core';
+import { Component, effect, inject, input, model, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WEEKDAY_LABELS } from '../../core/models';
 
@@ -21,6 +21,7 @@ export class PersonFormModal {
   readonly title = input.required<string>();
   readonly dayLabel = input.required<string>();
   readonly submitLabel = input.required<string>();
+  readonly initialValue = input<PersonFormValue | null>(null);
   readonly saved = output<PersonFormValue>();
 
   private readonly fb = inject(FormBuilder);
@@ -34,6 +35,21 @@ export class PersonFormModal {
     address: ['', Validators.required],
     details: [''],
   });
+
+  constructor() {
+    effect(() => {
+      if (this.open()) {
+        const value = this.initialValue();
+        this.form.reset({
+          name: value?.name ?? '',
+          age: value?.age ?? null,
+          dayOfWeek: value?.dayOfWeek ?? new Date().getDay(),
+          address: value?.address ?? '',
+          details: value?.details ?? '',
+        });
+      }
+    });
+  }
 
   protected close(): void {
     this.open.set(false);

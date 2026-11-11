@@ -66,6 +66,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.list__item:hover {
+  border-color: var(--color-primary);
 }
 
 .list__name {

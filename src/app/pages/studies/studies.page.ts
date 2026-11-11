@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { Header } from '../../shared/header/header';
 import { PersonFormModal, PersonFormValue } from '../../shared/person-form-modal/person-form-modal';
 import { RevisitsStudiesService } from '../../core/revisits-studies.service';
@@ -7,7 +8,7 @@ import { RevisitAndStudy, weekdayLabel } from '../../core/models';
 
 @Component({
   selector: 'app-studies',
-  imports: [Header, PersonFormModal],
+  imports: [Header, PersonFormModal, RouterLink],
   templateUrl: './studies.page.html',
   styleUrl: './studies.page.scss'
 })
