@@ -33,8 +33,8 @@ export class RevisitsStudiesService {
     return this.http.post<RevisitAndStudy>(this.baseUrl, body);
   }
 
-  update(id: string, body: RevisitAndStudyRequest): Observable<RevisitAndStudy> {
-    return this.http.put<RevisitAndStudy>(`${this.baseUrl}/${id}`, body);
+  update(id: string, body: Partial<RevisitAndStudyRequest>): Observable<RevisitAndStudy> {
+    return this.http.patch<RevisitAndStudy>(`${this.baseUrl}/${id}`, body);
   }
 
   delete(id: string): Observable<void> {

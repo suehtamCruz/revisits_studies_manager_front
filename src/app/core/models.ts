@@ -23,6 +23,7 @@ export interface RevisitAndStudy {
   dayOfWeek?: number;
   details?: string;
   address: string;
+  lastVisit?: string;
   type?: RevisitAndStudyType;
 }
 
@@ -32,6 +33,7 @@ export interface RevisitAndStudyRequest {
   dayOfWeek?: number;
   details?: string;
   address: string;
+  lastVisit?: string;
   type?: RevisitAndStudyType;
 }
 

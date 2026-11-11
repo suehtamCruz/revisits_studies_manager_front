@@ -8,6 +8,7 @@ export interface PersonFormValue {
   dayOfWeek: number;
   address: string;
   details: string;
+  lastVisit?: string;
 }
 
 @Component({
@@ -21,6 +22,7 @@ export class PersonFormModal {
   readonly title = input.required<string>();
   readonly dayLabel = input.required<string>();
   readonly submitLabel = input.required<string>();
+  readonly lastVisitLabel = input<string>('');
   readonly initialValue = input<PersonFormValue | null>(null);
   readonly saved = output<PersonFormValue>();
 
@@ -34,6 +36,7 @@ export class PersonFormModal {
     dayOfWeek: [new Date().getDay()],
     address: ['', Validators.required],
     details: [''],
+    lastVisit: [''],
   });
 
   constructor() {
@@ -46,6 +49,7 @@ export class PersonFormModal {
           dayOfWeek: value?.dayOfWeek ?? new Date().getDay(),
           address: value?.address ?? '',
           details: value?.details ?? '',
+          lastVisit: value?.lastVisit?.slice(0, 10) ?? '',
         });
       }
     });
@@ -68,6 +72,7 @@ export class PersonFormModal {
       dayOfWeek: value.dayOfWeek ?? new Date().getDay(),
       address: value.address ?? '',
       details: value.details ?? '',
+      lastVisit: value.lastVisit ? new Date(value.lastVisit).toISOString() : undefined,
     });
     this.form.reset({
       name: '',
@@ -75,6 +80,7 @@ export class PersonFormModal {
       dayOfWeek: new Date().getDay(),
       address: '',
       details: '',
+      lastVisit: '',
     });
     this.close();
   }

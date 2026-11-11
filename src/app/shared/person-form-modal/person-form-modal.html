@@ -34,13 +34,20 @@
           </div>
         </div>
 
+        @if (lastVisitLabel()) {
+        <div class="field">
+          <label class="field__label" for="person-last-visit">{{ lastVisitLabel() }}</label>
+          <input class="field__input" id="person-last-visit" type="date" formControlName="lastVisit" />
+        </div>
+        }
+
         <div class="field">
           <label class="field__label" for="person-address">Endereço</label>
           <input class="field__input" id="person-address" type="text" formControlName="address" />
         </div>
 
         <div class="field">
-          <label class="field__label" for="person-details">Detalhes</label>
+          <label class="field__label" for="person-details">Anotações</label>
           <textarea class="field__input field__input--textarea" id="person-details"
             formControlName="details"></textarea>
         </div>
