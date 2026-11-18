@@ -1,6 +1,6 @@
 {
-  "name": "Studies & Revisits",
-  "short_name": "Studies & Revisits",
+  "name": "Estudos e Revisitas",
+  "short_name": "Estudos e Revisitas",
   "description": "Organize seus estudos e revisitas",
   "lang": "pt-BR",
   "display": "standalone",
@@ -54,6 +54,12 @@
     {
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-1024x1024.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
     },
