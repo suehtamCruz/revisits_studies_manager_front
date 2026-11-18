@@ -27,6 +27,24 @@ export interface RevisitAndStudy {
   type?: RevisitAndStudyType;
 }
 
+export interface Visit {
+  date?: string;
+  details?: string;
+}
+
+export interface VisitRequest {
+  date: string;
+  details: string;
+}
+
+export interface PagedResult<T> {
+  page: number;
+  take: number;
+  total: number;
+  totalPages: number;
+  items: T[];
+}
+
 export interface RevisitAndStudyRequest {
   name: string;
   age?: number | null;

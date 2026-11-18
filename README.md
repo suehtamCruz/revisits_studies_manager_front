@@ -37,7 +37,8 @@ src/
     │   ├── auth/       # Login e cadastro (toggle "Entrar" / "Cadastrar")
     │   ├── home/       # Dashboard: estudos e revisitas do dia
     │   ├── studies/    # Listagem de estudos + cadastro via modal
-    │   └── revisits/   # Listagem de revisitas + cadastro via modal
+    │   ├── revisits/   # Listagem de revisitas + cadastro via modal
+    │   └── details/    # Detalhes do registro: edição, exclusão e histórico
     ├── shared/
     │   ├── header/             # Cabeçalho (abre o menu lateral)
     │   ├── menu/               # Menu lateral (drawer) com navegação
@@ -77,6 +78,16 @@ via botão "+ Novo" que abre o `app-person-form-modal`.
   endpoint. `dayOfWeek` segue o enum da API (0 = domingo … 6 = sábado), igual ao
   retorno de `Date.getDay()` — a home filtra pelo dia atual com
   `new Date().getDay()`. `type` aceita `Study` ou `Revisit`.
+- **Histórico de visitas**: `GET /api/revisitAndStudies/{id}/visits?page=&take=`
+  retorna `PagedResult<Visit>` (`page`, `take`, `total`, `totalPages`, `items`),
+  onde `Visit` tem `date` e `details`. A página de detalhes exibe o botão
+  "Ver mais" enquanto `page < totalPages`. Novas visitas são criadas com
+  `POST /api/revisitAndStudies/{id}/visits` enviando `{ date, details }`
+  (`date` em ISO string, como o campo `lastVisit` do cadastro).
+- **Conversão de tipo**: `PATCH /api/revisitAndStudies/{id}/type` com
+  `{ type: 'Study' | 'Revisit' }`. Ao abrir uma **revisita** cujo histórico tem
+  **3 ou mais visitas** (`total >= 3`), o app pergunta via SweetAlert se o
+  usuário deseja transformá-la em estudo; a confirmação chama esse endpoint.
 
 ## Componentes compartilhados
 

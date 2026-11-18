@@ -2,7 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { RevisitAndStudy, RevisitAndStudyRequest, RevisitAndStudyType } from './models';
+import {
+  PagedResult,
+  RevisitAndStudy,
+  RevisitAndStudyRequest,
+  RevisitAndStudyType,
+  Visit,
+  VisitRequest,
+} from './models';
 
 export interface RevisitAndStudyFilter {
   dayOfWeek?: number;
@@ -39,5 +46,18 @@ export class RevisitsStudiesService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  listVisits(id: string, page = 1, take = 10): Observable<PagedResult<Visit>> {
+    const params = new HttpParams().set('page', page).set('take', take);
+    return this.http.get<PagedResult<Visit>>(`${this.baseUrl}/${id}/visits`, { params });
+  }
+
+  changeType(id: string, type: RevisitAndStudyType): Observable<RevisitAndStudy> {
+    return this.http.patch<RevisitAndStudy>(`${this.baseUrl}/${id}/type`, { type });
+  }
+
+  addVisit(id: string, body: VisitRequest): Observable<Visit> {
+    return this.http.post<Visit>(`${this.baseUrl}/${id}/visits`, body);
   }
 }

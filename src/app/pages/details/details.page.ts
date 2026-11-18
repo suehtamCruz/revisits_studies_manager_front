@@ -1,23 +1,28 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import Swal from 'sweetalert2';
 import { Header } from '../../shared/header/header';
 import { PersonFormModal, PersonFormValue } from '../../shared/person-form-modal/person-form-modal';
 import { RevisitsStudiesService } from '../../core/revisits-studies.service';
 import { ToastService } from '../../core/toast.service';
-import { RevisitAndStudy, RevisitAndStudyRequest, weekdayLabel } from '../../core/models';
+import {
+  PagedResult,
+  RevisitAndStudy,
+  RevisitAndStudyRequest,
+  Visit,
+  weekdayLabel,
+} from '../../core/models';
 
 @Component({
   selector: 'app-details',
-  imports: [Header, PersonFormModal, MatTooltip],
+  imports: [Header, PersonFormModal, MatTooltip, ReactiveFormsModule],
   templateUrl: './details.page.html',
   styleUrl: './details.page.scss'
 })
-export class DetailsPage {
+export class DetailsPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(RevisitsStudiesService);
   private readonly location = inject(Location);
@@ -27,6 +32,26 @@ export class DetailsPage {
   protected readonly notFound = signal(false);
   protected readonly modalOpen = signal(false);
   protected readonly weekdayLabel = weekdayLabel;
+
+  protected readonly visits = signal<Visit[]>([]);
+  protected readonly visitsPage = signal(0);
+  protected readonly visitsTotalPages = signal(0);
+  protected readonly visitsLoading = signal(false);
+  protected readonly hasMoreVisits = computed(
+    () => this.visitsPage() < this.visitsTotalPages(),
+  );
+
+  protected readonly visitFormOpen = signal(false);
+  protected readonly visitSubmitting = signal(false);
+
+  private conversionPrompted = false;
+
+  private readonly fb = inject(FormBuilder);
+
+  protected readonly visitForm = this.fb.group({
+    date: [new Date().toLocaleDateString('en-CA'), Validators.required],
+    details: [''],
+  });
 
   protected readonly isStudy = computed(() => this.item()?.type === 'Study');
 
@@ -44,20 +69,14 @@ export class DetailsPage {
       lastVisit: record.lastVisit,
     };
   });
+  take = signal(5);
+  visitId = this.route.snapshot.paramMap.get('id');
 
-  constructor() {
-    this.route.paramMap
-      .pipe(
-        switchMap((params) => this.api.getById(params.get('id') ?? '')),
-        takeUntilDestroyed(),
-      )
-      .subscribe({
-        next: (item) => this.item.set(item),
-        error: (err) => {
-          this.notFound.set(true);
-          this.toast.apiError(err, 'Não foi possível carregar o registro.');
-        },
-      });
+  constructor() { 
+  }
+
+  ngOnInit(): void {
+    this.loadItem();
   }
 
   protected goBack(): void {
@@ -70,6 +89,117 @@ export class DetailsPage {
       month: '2-digit',
       year: 'numeric',
     }).format(new Date(value));
+  }
+
+  protected loadMoreVisits(): void {
+    this.loadVisits(this.visitsPage() + 1);
+  }
+
+  protected toggleVisitForm(): void {
+    this.visitFormOpen.update((open) => !open);
+    if (this.visitFormOpen()) {
+      this.visitForm.reset({
+        date: new Date().toLocaleDateString('en-CA'),
+        details: '',
+      });
+    }
+  }
+
+  protected submitVisit(): void {
+    const record = this.item();
+    if (!record || this.visitForm.invalid) {
+      this.visitForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.visitForm.getRawValue();
+    this.visitSubmitting.set(true);
+    this.api
+      .addVisit(record.id, {
+        date: new Date(value.date ?? '').toISOString(),
+        details: value.details ?? '',
+      })
+      .subscribe({
+        next: () => {
+          this.visitSubmitting.set(false);
+          this.visitFormOpen.set(false);
+          this.toast.success('Visita registrada com sucesso.');
+          this.loadVisits();
+          this.loadItem();
+        },
+        error: (err) => {
+          this.visitSubmitting.set(false);
+          this.toast.apiError(err, 'Não foi possível registrar a visita.');
+        },
+      });
+  }
+
+  private loadItem(): void {
+    this.api.getById(this.visitId!).subscribe({
+      next: (item) => {
+        this.item.set(item);
+        this.loadVisits();
+      },
+      error: (err) => {
+        this.notFound.set(true);
+        this.toast.apiError(err, 'Não foi possível carregar o registro.');
+      },
+    });
+  }
+
+  private loadVisits(page = 1): void {
+    const record = this.item();
+    if (!record) {
+      return;
+    }
+
+    this.visitsLoading.set(true);
+    this.api.listVisits(record.id, page, this.take()).subscribe({
+      next: (result) => {
+        this.visits.update((list) => (page === 1 ? result.items : [...list, ...result.items]));
+        this.visitsPage.set(result.page);
+        this.visitsTotalPages.set(result.totalPages);
+        this.visitsLoading.set(false);
+        this.maybePromptConversion(result);
+      },
+      error: (err) => {
+        this.visitsLoading.set(false);
+        this.toast.apiError(err, 'Não foi possível carregar o histórico.');
+      },
+    });
+  }
+
+  private maybePromptConversion(result: PagedResult<Visit>): void {
+    const record = this.item();
+    if (this.conversionPrompted || record?.type !== 'Revisit' || result.total < 3) {
+      return;
+    }
+    this.conversionPrompted = true;
+    void this.promptConvertToStudy(record, result.total);
+  }
+
+  private async promptConvertToStudy(record: RevisitAndStudy, total: number): Promise<void> {
+    const result = await Swal.fire({
+      title: 'Transformar em estudo?',
+      text: `Esta revisita já possui ${total} visitas registradas. Deseja transformá-la em um estudo?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, transformar',
+      cancelButtonText: 'Agora não',
+      confirmButtonColor: '#5b3a88',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    this.api.changeType(record.id, 'Study').subscribe({
+      next: (updated) => {
+        this.item.set(updated ?? { ...record, type: 'Study' });
+        this.toast.success('Revisita transformada em estudo.');
+      },
+      error: (err) => this.toast.apiError(err, 'Não foi possível converter o registro.'),
+    });
   }
 
   protected onSaved(person: PersonFormValue): void {

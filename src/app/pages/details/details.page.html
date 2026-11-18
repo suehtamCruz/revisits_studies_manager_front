@@ -65,6 +65,64 @@
       </div>
       }
     </dl>
+
+    <section class="history">
+      <div class="history__header">
+        <h2 class="history__title">Histórico de visitas</h2>
+        <button class="history__add" type="button" (click)="toggleVisitForm()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          {{ visitFormOpen() ? 'Fechar' : 'Nova visita' }}
+        </button>
+      </div>
+
+      @if (visitFormOpen()) {
+      <form class="visit-form" [formGroup]="visitForm" (ngSubmit)="submitVisit()">
+        <div class="visit-form__field">
+          <label class="visit-form__label" for="visit-date">Data da visita</label>
+          <input class="visit-form__input" id="visit-date" type="date" formControlName="date" />
+        </div>
+        <div class="visit-form__field">
+          <label class="visit-form__label" for="visit-details">Detalhes</label>
+          <textarea class="visit-form__input visit-form__input--textarea" id="visit-details"
+            formControlName="details" rows="3" placeholder="Como foi a visita?"></textarea>
+        </div>
+        <div class="visit-form__actions">
+          <button class="visit-form__submit" type="submit" [disabled]="visitSubmitting()">
+            {{ visitSubmitting() ? 'Salvando...' : 'Adicionar' }}
+          </button>
+        </div>
+      </form>
+      }
+
+      @if (visits().length) {
+      <ul class="history__list">
+        @for (visit of visits(); track $index) {
+        <li class="history__item">
+          @if (visit.date) {
+          <span class="history__date">{{ formatDate(visit.date) }}</span>
+          }
+          @if (visit.details) {
+          <p class="history__details">{{ visit.details }}</p>
+          }
+        </li>
+        }
+      </ul>
+      } @else if (visitsLoading()) {
+      <p class="history__empty">Carregando histórico...</p>
+      } @else {
+      <p class="history__empty">Nenhuma visita registrada ainda.</p>
+      }
+
+      @if (hasMoreVisits()) {
+      <button class="history__more" type="button" [disabled]="visitsLoading()" (click)="loadMoreVisits()">
+        {{ visitsLoading() ? 'Carregando...' : 'Ver mais' }}
+      </button>
+      }
+    </section>
   </section>
   } @else if (notFound()) {
   <div class="empty">
