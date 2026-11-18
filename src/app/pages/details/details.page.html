@@ -91,7 +91,8 @@
             formControlName="details" rows="3" placeholder="Como foi a visita?"></textarea>
         </div>
         <div class="visit-form__actions">
-          <button class="visit-form__submit" type="submit" [disabled]="visitSubmitting()">
+          <button class="visit-form__submit" type="submit"
+            [disabled]="visitSubmitting() || visitForm.invalid">
             {{ visitSubmitting() ? 'Salvando...' : 'Adicionar' }}
           </button>
         </div>

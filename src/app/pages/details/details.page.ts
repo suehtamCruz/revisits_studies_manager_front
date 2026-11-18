@@ -15,6 +15,7 @@ import {
   Visit,
   weekdayLabel,
 } from '../../core/models';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-details',
@@ -49,8 +50,8 @@ export class DetailsPage implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   protected readonly visitForm = this.fb.group({
-    date: [new Date().toLocaleDateString('en-CA'), Validators.required],
-    details: [''],
+    date: ['', Validators.required],
+    details: ['', Validators.required],
   });
 
   protected readonly isStudy = computed(() => this.item()?.type === 'Study');
@@ -99,7 +100,7 @@ export class DetailsPage implements OnInit {
     this.visitFormOpen.update((open) => !open);
     if (this.visitFormOpen()) {
       this.visitForm.reset({
-        date: new Date().toLocaleDateString('en-CA'),
+        date: '',
         details: '',
       });
     }
@@ -119,9 +120,9 @@ export class DetailsPage implements OnInit {
         date: new Date(value.date ?? '').toISOString(),
         details: value.details ?? '',
       })
+      .pipe(finalize(() => this.visitSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.visitSubmitting.set(false);
           this.visitFormOpen.set(false);
           this.toast.success('Visita registrada com sucesso.');
           this.loadVisits();
